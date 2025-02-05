@@ -100,6 +100,32 @@ export CURSOR_NOTES_DIR="$HOME/Developer/CLI/cursor-notes"
 4. Push to the branch
 5. Create a new Pull Request
 
+## Roadmap 🗺️
+
+### Coming Soon 🚀
+- [ ] Note templates for different types of documentation
+- [ ] Auto-backup to GitHub
+- [ ] Tags and categories for notes
+- [ ] Full-text search across all notes
+
+### In Progress 🏗️
+- [ ] Syntax highlighting improvements
+- [ ] Better note organization
+- [ ] Integration with external editors
+
+### Backlog 📝
+- [ ] Note sharing capabilities
+- [ ] Export to different formats
+- [ ] Web interface
+- [ ] Mobile app integration
+
+### Completed ✅
+- [x] Basic note creation and management
+- [x] Markdown support
+- [x] Terminal-based viewing
+- [x] Search functionality
+- [x] Git integration
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
