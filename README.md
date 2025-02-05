@@ -58,6 +58,12 @@ vnm meeting.md              # View rendered markdown
 vnc meeting.md              # View clean text
 ```
 
+#### Common Use Case
+locate a boilerplate from a developer reference note file...
+
+![CleanShot 2025-02-05 at 16 36 56@2x](https://github.com/user-attachments/assets/aeb2ce59-506d-4e4b-bf0a-f17413e0b0df)
+
+
 ### Search Notes
 ```bash
 sn meeting.md "Action Items" # Search with context
