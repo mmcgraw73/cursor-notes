@@ -1,4 +1,7 @@
 # Cursor Notes CLI
+![CleanShot 2025-02-05 at 15 52 20@2x](https://github.com/user-attachments/assets/d980fdeb-d165-4f87-8b09-b5a41fb0a798)
+
+
 
 A command-line note management system integrated with the Cursor editor. Quickly create, view, search, and manage markdown notes directly from your terminal.
 
