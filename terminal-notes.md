@@ -5,59 +5,61 @@ A set of command-line tools for managing markdown notes in `~/Developer/CLI/curs
 ## Commands
 
 ### Create New Note
+Create and open a new timestamped note:
 ```bash
-note "Title of Note"    # Creates and opens a new note with timestamp
+note "Title of Note"     # Creates and opens a new note
 new-note "Title"        # Alternative command
 ```
-- Creates a markdown file with format: `YYYYMMDD_HHMMSS_title.md`
-- Opens the new file in Cursor
-- If no title provided, prompts for one
 
 ### List Notes
+View your recent notes:
 ```bash
-notes           # Lists recent notes
-list-notes      # Alternative command
+notes                   # Lists recent notes
+list-notes             # Alternative command
 ```
-- Shows 10 most recent notes
-- Displays filename and first line of each note
 
 ### Open Note
+Select and open notes interactively:
 ```bash
-open-note       # Interactive note selector
+open-note              # Interactive note selector
 ```
-- Shows numbered list of available notes
-- Select note by number to open in Cursor
 
 ### View Note Content
+Display note contents with different formatting:
 ```bash
-viewnote filename.md    # View entire note
-vn filename.md         # Shorthand alias
+viewnote filename.md   # View entire note
+vn filename.md        # Shorthand alias
+vnr filename.md       # Raw view with syntax highlighting
+vnm filename.md       # Rendered markdown view
+vnc filename.md       # Clean view (no formatting)
 ```
-- Displays content of specified note
-- Shows available notes if file not found
 
 ### Search Notes
+Search within notes with context:
 ```bash
 searchnote filename.md "search term" [before] [after]
 sn filename.md "search term"
 ```
-- Searches within specified note
-- Optional context lines:
-  - `before`: lines before match (default: 1)
-  - `after`: lines after match (default: 20)
+
+**Context Options:**
+- `before`: Number of lines before match (default: 1)
+- `after`: Number of lines after match (default: 20)
 
 ## Directory Structure
+Notes are stored in:
 ```bash
 $CURSOR_NOTES_DIR = ~/Developer/CLI/cursor-notes/
 ```
 
 ## File Format
-```
+Standard markdown format:
+```markdown
 # Title of Note
 Content goes here...
 ```
 
 ## Examples
+Common usage patterns:
 ```bash
 # Create new note
 note "Meeting Minutes"
