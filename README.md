@@ -104,6 +104,6 @@ Michael McGraw
 
 ## Acknowledgments
 
-- Inspired by the need for quick, terminal-based note-taking
+- Inspired by the need for quick, terminal-based note-management
 - Built for developers who live in the terminal
 - Enhanced by the Cursor editor's capabilities
