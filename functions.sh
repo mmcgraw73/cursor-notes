@@ -6,12 +6,36 @@ export CURSOR_NOTES_DIR="$HOME/Developer/CLI/cursor-notes/notes"
 
 # Create and open a new note
 function new-note() {
-    local timestamp=$(date +%Y%m%d_%H%M%S)
-    local title="$*"
+    local dir="$CURSOR_NOTES_DIR"  # Default directory
+    local title=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -d|--dir)
+                dir="$2"
+                shift 2
+                ;;
+            *)
+                title="$title $1"
+                shift
+                ;;
+        esac
+    done
+    
+    # Trim leading/trailing spaces from title
+    title="${title## }"
+    title="${title%% }"
+    
+    # Prompt for title if not provided
     [ -z "$title" ] && read "title?Enter note title: "
     
+    # Create directory if it doesn't exist
+    mkdir -p "$dir"
+    
+    local timestamp=$(date +%Y%m%d_%H%M%S)
     local filename="${timestamp}_${title// /_}.md"
-    local filepath="$CURSOR_NOTES_DIR/$filename"
+    local filepath="$dir/$filename"
     
     echo "# $title" > "$filepath"
     cursor "$filepath"
