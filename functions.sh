@@ -6,14 +6,19 @@ export CURSOR_NOTES_DIR="$HOME/Developer/CLI/cursor-notes/notes"
 
 # Create and open a new note
 function new-note() {
-    local dir="$CURSOR_NOTES_DIR"  # Default directory
+    local dir="$CURSOR_NOTES_DIR"
+    local template=""
     local title=""
+    local current_date=$(command date '+%Y-%m-%d')
     
-    # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -d|--dir)
-                dir="$2"
+                dir="${2%/}"
+                shift 2
+                ;;
+            -t|--template)
+                template="$2"
                 shift 2
                 ;;
             *)
@@ -23,21 +28,39 @@ function new-note() {
         esac
     done
     
-    # Trim leading/trailing spaces from title
     title="${title## }"
     title="${title%% }"
     
-    # Prompt for title if not provided
     [ -z "$title" ] && read "title?Enter note title: "
     
-    # Create directory if it doesn't exist
     mkdir -p "$dir"
     
-    local timestamp=$(date +%Y%m%d_%H%M%S)
+    local timestamp=$(command date +%Y%m%d_%H%M%S)
     local filename="${timestamp}_${title// /_}.md"
     local filepath="$dir/$filename"
     
-    echo "# $title" > "$filepath"
+    local template_path=""
+    local possible_paths=(
+        "$CURSOR_NOTES_DIR/templates/${template}.md"
+        "./templates/${template}.md"
+        "${template}.md"
+    )
+    
+    for path in "${possible_paths[@]}"; do
+        if [ -f "$path" ]; then
+            template_path="$path"
+            break
+        fi
+    done
+    
+    if [ -n "$template" ] && [ -n "$template_path" ]; then
+        command sed "s/{{DATE}}/$current_date/g" "$template_path" > "$filepath"
+        echo "Created note from template: $template_path"
+    else
+        echo "# $title" > "$filepath"
+        echo "Warning: Template not found, created basic note"
+    fi
+    
     cursor "$filepath"
 }
 
