@@ -5,64 +5,42 @@ export CURSOR_NOTES_DIR="$HOME/Developer/CLI/cursor-notes/notes"
 [ ! -d "$CURSOR_NOTES_DIR" ] && mkdir -p "$CURSOR_NOTES_DIR"
 
 # Create and open a new note
-function new-note() {
-    local dir="$CURSOR_NOTES_DIR"
-    local template=""
-    local title=""
-    local current_date=$(command date '+%Y-%m-%d')
+function mdview() {
+    local input_path="$1"
+    local fullpath=""
     
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -d|--dir)
-                dir="${2%/}"
-                shift 2
-                ;;
-            -t|--template)
-                template="$2"
-                shift 2
-                ;;
-            *)
-                title="$title $1"
-                shift
-                ;;
-        esac
-    done
+    # Debug - print current locations
+    echo "Searching for note: $input_path"
     
-    title="${title## }"
-    title="${title%% }"
-    
-    [ -z "$title" ] && read "title?Enter note title: "
-    
-    mkdir -p "$dir"
-    
-    local timestamp=$(command date +%Y%m%d_%H%M%S)
-    local filename="${timestamp}_${title// /_}.md"
-    local filepath="$dir/$filename"
-    
-    local template_path=""
-    local possible_paths=(
-        "$CURSOR_NOTES_DIR/templates/${template}.md"
-        "./templates/${template}.md"
-        "${template}.md"
-    )
-    
-    for path in "${possible_paths[@]}"; do
-        if [ -f "$path" ]; then
-            template_path="$path"
-            break
-        fi
-    done
-    
-    if [ -n "$template" ] && [ -n "$template_path" ]; then
-        command sed "s/{{DATE}}/$current_date/g" "$template_path" > "$filepath"
-        echo "Created note from template: $template_path"
+    # First try mcgraw/daily with absolute path
+    if [[ -f "$CURSOR_NOTES_DIR/mcgraw/daily/$input_path" ]]; then
+        fullpath="$CURSOR_NOTES_DIR/mcgraw/daily/$input_path"
+        echo "Found in daily notes"
+    # Then try the notes directory
+    elif [[ -f "$CURSOR_NOTES_DIR/$input_path" ]]; then
+        fullpath="$CURSOR_NOTES_DIR/$input_path"
+        echo "Found in notes root"
     else
-        echo "# $title" > "$filepath"
-        echo "Warning: Template not found, created basic note"
+        echo "Cannot find note: $input_path"
+        if [[ -d "$CURSOR_NOTES_DIR/mcgraw/daily" ]]; then
+            echo "Available notes in mcgraw/daily:"
+            /bin/ls -1 "$CURSOR_NOTES_DIR/mcgraw/daily"
+        fi
+        return 1
     fi
     
-    cursor "$filepath"
+    if [[ -f "$fullpath" ]]; then
+        if command -v glow &> /dev/null; then
+            /opt/homebrew/bin/glow "$fullpath"
+        else
+            /bin/cat "$fullpath"
+        fi
+    fi
 }
+
+alias mdv='mdview'
+
+alias mdv='mdview'
 
 # List recent notes
 function list-notes() {
@@ -79,46 +57,34 @@ function list-notes() {
 
 # View note content with different formatting options
 function viewnote() {
-    local notepath="$CURSOR_NOTES_DIR/$1"
+    local input_path="$1"
     local mode="$2"
+    local fullpath=""
     
-    if [[ ! -f "$notepath" ]]; then
-        echo "📝 Cannot find note: $1"
-        echo "Available notes:"
-        ls -1 "$CURSOR_NOTES_DIR"
+    # Check locations in order
+    if [[ -f "$input_path" ]]; then
+        fullpath="$input_path"
+    elif [[ -f "$CURSOR_NOTES_DIR/mcgraw/daily/$input_path" ]]; then
+        fullpath="$CURSOR_NOTES_DIR/mcgraw/daily/$input_path"
+    elif [[ -f "$CURSOR_NOTES_DIR/$input_path" ]]; then
+        fullpath="$CURSOR_NOTES_DIR/$input_path"
+    else
+        echo "📝 Cannot find note: $input_path"
+        if [[ -d "$CURSOR_NOTES_DIR/mcgraw/daily" ]]; then
+            echo "Available notes in mcgraw/daily:"
+            /bin/ls -1 "$CURSOR_NOTES_DIR/mcgraw/daily"
+        fi
         return 1
     fi
     
-    case "$mode" in
-        "raw")
-            # Syntax highlighted view with line numbers
-            echo "📄 Raw view with syntax highlighting:"
-            echo "-----------------------------------"
-            sed '/^```/d' "$notepath" | \
-                bat --theme="Dracula" \
-                    --style=numbers \
-                    --language=md
-            ;;
-        "render"|"")
-            # Full markdown rendering
-            echo "🎨 Rendered markdown view:"
-            echo "----------------------"
-            glow -s dark "$notepath"
-            ;;
-        "clean")
-            # Clean text view
-            echo "🧹 Clean view (no formatting):"
-            echo "--------------------------"
-            sed '/^```/d' "$notepath" | cat
-            ;;
-        *)
-            echo "❓ Usage: viewnote <filename> [raw|render|clean]"
-            echo "   - raw:    syntax highlighted view"
-            echo "   - render: formatted markdown (default)"
-            echo "   - clean:  plain text, no formatting"
-            ;;
-    esac
+    if command -v glow &> /dev/null; then
+        /opt/homebrew/bin/glow "$fullpath"
+    else
+        /bin/cat "$fullpath"
+    fi
 }
+
+alias mdv='viewnote'
 
 # Search within notes
 function search-notes() {
