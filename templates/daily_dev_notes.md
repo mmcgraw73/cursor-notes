@@ -1,31 +1,49 @@
 # Daily Dev Notes - {{DATE}}
 
 ## 🎯 Today's Focus
+
 - [ ] Primary goal:
 - [ ] Secondary goal:
 
 ## 📋 Tasks
-### High Priority
-- [ ] 
-- [ ] 
+
+### Priority
+
+- [ ]
+- [ ]
 
 ### In Progress
-- [ ] 
-- [ ] 
 
-### Backlog
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
+
+### Upcoming
+
+- [ ]
+- [ ]
 
 ## 🔄 Daily Standup
+
 ### Yesterday
-- 
+
+-
 
 ### Today
-- 
+
+-
 
 ### Blockers
-- 
+
+-
 
 ## 💡 Notes & Observations
-### Code Changes
+
+### Code
+
+```javascript
+
+```
+
+### Documentation
+
+### Research
