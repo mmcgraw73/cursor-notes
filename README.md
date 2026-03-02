@@ -1,141 +1,194 @@
-# Cursor Notes CLI
+# Cursor Notes
+
+A terminal-first note-taking system for developers — timestamped markdown notes, architecture documentation, and daily task tracking, all managed from the command line and opened in [Cursor](https://cursor.sh/).
+
 ![CleanShot 2025-02-05 at 15 52 20@2x](https://github.com/user-attachments/assets/d980fdeb-d165-4f87-8b09-b5a41fb0a798)
 
+---
 
+## What's in here
 
-A command-line note management system integrated with the Cursor editor. Quickly create, view, search, and manage markdown notes directly from your terminal.
+| Category | Files | Purpose |
+|----------|-------|---------|
+| **Architecture docs** | `vbms-core-auth-flow.md` | Deep-dive technical references (VBMS auth flow, system traces) |
+| **Timestamped notes** | `20260302_*.md`, etc. | Session notes, investigation logs, meeting captures |
+| **Daily task lists** | `templates/doingit.md` | "Doing It" lists — 5 items per day + timesheet reminder |
+| **Dev reference** | `aliases.md` | Quick-reference for git, npm, and editor commands |
+| **CLI toolkit** | `functions.sh` | Shell functions for creating, viewing, and searching notes |
+| **Templates** | `templates/` | Reusable note scaffolds (daily dev notes, doing-it lists) |
 
-## Features
+### Architecture Documentation
 
-🚀 **Quick Note Creation**
-- Create timestamped notes instantly
-- Auto-opens in Cursor editor
-- Markdown support by default
+The repo doubles as a living knowledge base. Key documents:
 
-📝 **Multiple Viewing Options**
-- Rendered markdown preview
-- Syntax highlighted view
-- Clean text view
-- Terminal-friendly formatting
+- **[vbms-core-auth-flow.md](vbms-core-auth-flow.md)** — End-to-end VBMS Core authentication & authorization trace: Browser → Apache/SiteMinder → Keycloak → IDP Proxy → CSS → SAML → XACML. Every redirect, cookie, token, and transformation across 5 systems and 3 protocols (765 lines).
 
-🔍 **Search Capabilities**
-- Full-text search within notes
-- Configurable context lines
-- Quick file navigation
+### Daily Notes (private)
+
+The `mcgraw/` directory holds daily notes and is `.gitignore`d. Structure:
+
+```
+mcgraw/
+├── daily/          # Daily "doing it" lists
+│   ├── 20250206_111354_thursday.md
+│   └── ...
+└── docs/           # Meeting notes, research
+```
+
+---
 
 ## Installation
 
-1. Clone the repository:
 ```bash
 git clone git@github.com:mmcgraw73/cursor-notes.git
 cd cursor-notes
 ```
 
-2. Add the functions to your `.zshrc`:
+Add to your `~/.zshrc`:
+
 ```bash
-# Source the functions (add to your .zshrc)
 source ~/Developer/CLI/cursor-notes/functions.sh
 ```
 
-3. Install required dependencies:
+Install dependencies:
+
 ```bash
 brew install glow bat
 ```
 
+| Dependency | Purpose |
+|------------|---------|
+| [glow](https://github.com/charmbracelet/glow) | Rendered markdown in the terminal |
+| [bat](https://github.com/sharkdp/bat) | Syntax-highlighted file viewing |
+| [Cursor](https://cursor.sh/) | AI-native editor (notes auto-open here) |
+
+---
+
 ## Usage
 
-### Create Notes
+### Create a note
+
 ```bash
-note "Meeting Notes"          # Create and open new note
+note "CSAP 403 Investigation"     # Creates timestamped .md, opens in Cursor
 ```
 
-### View Notes
+Creates `20260302_143500_csap-403-investigation.md` and opens it.
+
+### List recent notes
+
 ```bash
-notes                        # List recent notes
-vn meeting.md               # View note (default rendered)
-vnr meeting.md              # View with syntax highlighting
-vnm meeting.md              # View rendered markdown
-vnc meeting.md              # View clean text
+notes                              # 10 most recent, with first-line preview
 ```
 
-#### Common Use Case
-locate a boilerplate from a developer reference note file...
+### View a note
+
+```bash
+vn auth-flow.md                    # Rendered markdown (glow)
+vnr auth-flow.md                   # Syntax highlighted (bat)
+vnc auth-flow.md                   # Clean text (cat)
+```
+
+The viewer searches in order: current directory → `mcgraw/daily/` → notes root.
 
 ![CleanShot 2025-02-05 at 16 36 56@2x](https://github.com/user-attachments/assets/aeb2ce59-506d-4e4b-bf0a-f17413e0b0df)
 
+### Search notes
 
-### Search Notes
 ```bash
-sn meeting.md "Action Items" # Search with context
+sn auth-flow.md "securityLevel"    # Search within a specific note
+sn "" "XACML"                      # Search across all notes
 ```
 
-## Directory Structure
+Context defaults: 1 line before, 20 lines after. Override:
+
+```bash
+sn auth-flow.md "SAML" 3 10       # 3 before, 10 after
+```
+
+---
+
+## File naming convention
+
+Notes are auto-named with a timestamp prefix:
+
+```
+YYYYMMDD_HHMMSS_slug.md
+```
+
+Examples:
+- `20260302_083609.md` — daily doing-it list (no slug = quick note)
+- `20260226_125635.md` — session note
+- `20250617_170136_local-arm-mac_updates.md` — titled investigation
+
+---
+
+## Templates
+
+| Template | Path | Use |
+|----------|------|-----|
+| **Doing It** | `templates/doingit.md` | 5-item daily task list with timesheet |
+| **Daily Dev Notes** | `templates/daily_dev_notes.md` | Focus areas, priorities, DSU prep |
+
+### Doing It template
+
+```markdown
+# {{DAY_DATE}}
+
+## DOING IT LIST
+
+- [] 1  
+- [] 2
+- [] 3
+- [] 4
+- [] 5 TIMESHEET
+```
+
+---
+
+## Directory structure
 
 ```
 cursor-notes/
-├── README.md               # This file
-├── functions.sh           # Shell functions
-├── LICENSE               # GNU GPL v3
-└── notes/                # Your markdown notes
+├── functions.sh                     # Shell functions (note, notes, vn, sn, etc.)
+├── aliases.md                       # Developer command quick reference
+├── terminal-notes.md                # CLI documentation
+├── vbms-core-auth-flow.md           # Architecture: VBMS auth end-to-end
+├── templates/
+│   ├── doingit.md                   # Daily task list template
+│   └── daily_dev_notes.md           # Daily dev notes template
+├── mcgraw/                          # Private daily notes (.gitignored)
+│   ├── daily/
+│   └── docs/
+├── 20260302_*.md                    # Timestamped session notes
+├── 20260226_*.md
+├── ...
+├── LICENSE                          # GNU GPL v3
+└── README.md
 ```
+
+---
 
 ## Configuration
 
-Default settings are stored in your `.zshrc`:
 ```bash
 export CURSOR_NOTES_DIR="$HOME/Developer/CLI/cursor-notes"
 ```
 
-## Dependencies
+Set in `~/.zshrc`. All functions reference this path for note storage and lookup.
 
-- [Cursor Editor](https://cursor.sh/)
-- [glow](https://github.com/charmbracelet/glow) - Markdown rendering
-- [bat](https://github.com/sharkdp/bat) - Syntax highlighting
+---
 
-## Contributing
+## Related
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+- **[mcgraw-vbms-developer-guides](https://github.com/mcgraw-7/mcgraw-vbms-developer-guides/wiki)** — GitHub Wiki with polished versions of architecture docs from this repo
+- **[bip-developer-guides](https://github.com/department-of-veterans-affairs/bip-developer-guides/wiki)** — Team wiki
 
-## Roadmap 🗺️
-
-### Coming Soon 🚀
-- [ ] Note templates for different types of documentation
-- [ ] Auto-backup to GitHub
-- [ ] Tags and categories for notes
-- [ ] Full-text search across all notes
-
-### In Progress 🏗️
-- [ ] Syntax highlighting improvements
-- [ ] Better note organization
-- [ ] Integration with external editors
-
-### Backlog 📝
-- [ ] Note sharing capabilities
-- [ ] Export to different formats
-- [ ] Web interface
-- [ ] Mobile app integration
-
-### Completed ✅
-- [x] Basic note creation and management
-- [x] Markdown support
-- [x] Terminal-based viewing
-- [x] Search functionality
-- [x] Git integration
+---
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+GNU General Public License v3.0 — see [LICENSE](LICENSE).
 
 ## Author
 
 Michael McGraw
-
-## Acknowledgments
-
-- Inspired by the need for quick, terminal-based note-management
-- Built for developers who live in the terminal
-- Enhanced by the Cursor editor's capabilities
